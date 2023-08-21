@@ -1,6 +1,5 @@
 import { Helmet } from "react-helmet-async";
 import { filter } from "lodash";
-import { sentenceCase } from "change-case";
 import { useState } from "react";
 // @mui
 import {
@@ -24,7 +23,6 @@ import {
 // components
 
 import Iconify from "../components/iconify";
-import Scrollbar from "../components/scrollbar";
 
 import { UserListHead, UserListToolbar } from "../sections/@dashboard/user";
 
@@ -79,8 +77,7 @@ function applySortFilter(array, comparator, query) {
 
 export default function UserPage() {
   const { data: USERLIST } = useUsersQuery();
-  console.log(USERLIST);
-  // console.log(USERLIST);
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -164,7 +161,7 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> TOdo | Minimal UI </title>
       </Helmet>
 
       <Container>
@@ -175,13 +172,13 @@ export default function UserPage() {
           mb={5}
         >
           <Typography variant="h4" gutterBottom>
-            User
+            Todo
           </Typography>
           <Button
             variant="contained"
             startIcon={<Iconify icon="eva:plus-fill" />}
           >
-            New User
+            New Todo
           </Button>
         </Stack>
 
