@@ -14,10 +14,12 @@ export const authSlice = createSlice({
     logIn: (state, action) => {
       state.user.email = action.payload.email;
       state.user.name = action.payload.name;
+      localStorage.setItem("auth", JSON.stringify(action.payload));
     },
     logOut: (state) => {
       state.user.email = "";
       state.user.name = "";
+      localStorage.removeItem("auth");
     },
   },
 });

@@ -29,10 +29,33 @@ export default function Router() {
             </PrivateRoute>
           ),
         },
-        { path: "user", element: <UserPage /> },
-        { path: "products", element: <ProductsPage /> },
+        {
+          path: "user",
+          element: (
+            <PrivateRoute>
+              {" "}
+              <UserPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: "products",
+          element: (
+            <PrivateRoute>
+              {" "}
+              <ProductsPage />{" "}
+            </PrivateRoute>
+          ),
+        },
         { path: "blog", element: <BlogPage /> },
-        { path: "todos", element: <TodosPage /> },
+        {
+          path: "todos",
+          element: (
+            <PrivateRoute>
+              <TodosPage />{" "}
+            </PrivateRoute>
+          ),
+        },
       ],
     },
     {

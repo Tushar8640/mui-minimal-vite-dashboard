@@ -32,7 +32,6 @@ import { UserListHead, UserListToolbar } from "../sections/@dashboard/user";
 import USERLIST from "../_mock/user";
 import { useDispatch, useSelector } from "react-redux";
 import { increment } from "../store/features/counter/counterSLice";
-import {  useUsersQuery } from "../store/api";
 
 // ----------------------------------------------------------------------
 
@@ -162,9 +161,7 @@ export default function UserPage() {
 
   const value = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
-  const { data } = useUsersQuery();
-  console.log(data);
-console.log(USERLIST);
+
   return (
     <>
       <Helmet>
@@ -320,7 +317,7 @@ console.log(USERLIST);
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={USERLIST?.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
