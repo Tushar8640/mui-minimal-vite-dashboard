@@ -17,6 +17,8 @@ import { useTheme } from "@mui/material/styles";
 import supabase from "../../supabase/index";
 import { useEffect, useState } from "react";
 import { UploadFileOutlined } from "@mui/icons-material";
+import { enqueueSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
 
 function getStyles(name, personName, theme) {
   return {
@@ -43,7 +45,7 @@ export default function AddProductForm() {
   const [colors, setColors] = useState([]);
   const [productData, setProductData] = useState({});
   const theme = useTheme();
-
+const navigate = useNavigate();
   const handleOnChange = (event) => {
     const { value, name } = event.target;
     const newData = { ...productData, [name]: value };
@@ -94,46 +96,60 @@ export default function AddProductForm() {
     .map((filteredData) => filteredData.color_id);
 
   const addProducts = async () => {
-    const { data, error } = await supabase
-      .from("products")
-      .insert([
-        {
-          name: productData?.name,
-          description: productData?.description,
-          quantity: productData?.quantity,
-          price: productData?.price,
-          category_id: category,
-        },
-      ])
-      .select();
-    console.log(data);
-    if (error) {
-      console.error(error.message);
-      return;
-    }
-
-    const productID = data[0]?.product_id;
-
-    if (productID) {
-      const colorsToAssociate = filteredColorsId; // Array of color IDs
-
-      const colorAssociations = colorsToAssociate.map((colorID) => ({
-        product_id: productID,
-        color_id: colorID,
-      }));
-
-      const { data, error: colorError } = await supabase
-        .from("product_colors")
-        .insert(colorAssociations)
+    if (
+      productData?.name &&
+      productData?.description &&
+      productData?.quantity !== undefined &&
+      productData?.price !== undefined &&
+      category
+    ) {
+      const { data, error } = await supabase
+        .from("products")
+        .insert([
+          {
+            name: productData?.name,
+            description: productData?.description,
+            quantity: productData?.quantity,
+            price: productData?.price,
+            category: category,
+          },
+        ])
         .select();
       console.log(data);
-      if (colorError) {
-        console.error(colorError.message);
+      if (error) {
+        console.error(error.message);
         return;
       }
-    }
 
-    console.log(data, "Product and color associations added successfully.");
+      const productID = data[0]?.product_id;
+
+      if (productID) {
+        const colorsToAssociate = filteredColorsId; // Array of color IDs
+
+        const colorAssociations = colorsToAssociate.map((colorID) => ({
+          product_id: productID,
+          color_id: colorID,
+        }));
+
+        const { data, error: colorError } = await supabase
+          .from("product_colors")
+          .insert(colorAssociations)
+          .select();
+        console.log(data);
+
+        if (colorError) {
+          console.error(colorError.message);
+          return;
+        }
+      
+      }
+      enqueueSnackbar("Product added successfully!", { variant: "success" });
+      console.log(data, "Product and color associations added successfully.");
+      setProductData({})
+      navigate("/dashboard/products")
+    } else {
+      enqueueSnackbar("Please fill all of the fields!", { variant: "error" });
+    }
   };
 
   return (
@@ -152,8 +168,10 @@ export default function AddProductForm() {
               fullWidth
               label="Product Name"
               id="fullWidth"
+              required
             />
             <TextField
+              required
               name="description"
               fullWidth
               onChange={(e) => handleOnChange(e)}
@@ -163,10 +181,9 @@ export default function AddProductForm() {
               rows={4}
             />
             <FormControl fullWidth sx={{ m: 1 }}>
-              <InputLabel htmlFor="outlined-adornment-amount">
-                Price
-              </InputLabel>
+              <InputLabel htmlFor="outlined-adornment-amount">Price</InputLabel>
               <OutlinedInput
+                required
                 name="price"
                 type="number"
                 label="Price"
@@ -175,18 +192,20 @@ export default function AddProductForm() {
                 startAdornment={
                   <InputAdornment position="start">$</InputAdornment>
                 }
-               
               />
             </FormControl>
             <FormControl fullWidth sx={{ m: 1 }}>
               <InputLabel id="demo-multiple-chip-label">Color</InputLabel>
               <Select
+                required
                 labelId="demo-multiple-chip-label"
                 id="demo-multiple-chip"
                 multiple
                 value={selecetdColors}
                 onChange={handleChange}
-                input={<OutlinedInput id="select-multiple-chip" label="Color" />}
+                input={
+                  <OutlinedInput id="select-multiple-chip" label="Color" />
+                }
                 renderValue={(selected) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((value) => (
@@ -211,6 +230,7 @@ export default function AddProductForm() {
           <Stack width={500} spacing={2}>
             {/* <TextField fullWidth id="fullWidth" type="file" /> */}
             <TextField
+              required
               onChange={(e) => handleOnChange(e)}
               fullWidth
               id="fullWidth"
@@ -224,6 +244,7 @@ export default function AddProductForm() {
             <FormControl onChange={(e) => handleOnChange(e)} fullWidth>
               <InputLabel id="demo-simple-select-label">Category</InputLabel>
               <Select
+                required
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={category}
@@ -258,7 +279,7 @@ export default function AddProductForm() {
               component="label"
               fullWidth
               startIcon={<UploadFileOutlined />}
-              sx={{height:195}}
+              sx={{ height: 195 }}
             >
               Upload Image
               <input

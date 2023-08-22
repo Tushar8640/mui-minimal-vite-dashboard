@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { logIn } from "./store/features/auth/authSlice";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import { SnackbarProvider } from "notistack";
 
 // ----------------------------------------------------------------------
 
@@ -49,7 +50,9 @@ export default function App() {
         <ThemeProvider>
           <ScrollToTop />
           <StyledChart />
+          <SnackbarProvider maxSnack={3}>
           <Router />
+          </SnackbarProvider>
         </ThemeProvider>
       </BrowserRouter>
     </HelmetProvider>
