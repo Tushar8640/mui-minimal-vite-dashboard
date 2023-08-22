@@ -24,10 +24,11 @@ import {
 
 import Iconify from "../components/iconify";
 
-import { UserListHead, UserListToolbar } from "../sections/@dashboard/user";
+import { UserListHead } from "../sections/@dashboard/user";
 
 import { Link } from "react-router-dom";
 import supabase from "../supabase";
+import ProductListToolbar from "../sections/@dashboard/products/ProductListToolbar";
 
 // ----------------------------------------------------------------------
 
@@ -192,13 +193,14 @@ export default function UserPage() {
               variant="contained"
               startIcon={<Iconify icon="eva:plus-fill" />}
             >
-              New Todo
+              New Product
             </Button>
           </Link>
         </Stack>
 
         <Card>
-          <UserListToolbar
+          <ProductListToolbar
+            placeholder={"Search Produncts..."}
             numSelected={selected?.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
