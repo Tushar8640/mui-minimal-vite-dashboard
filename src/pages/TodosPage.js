@@ -27,6 +27,7 @@ import Iconify from "../components/iconify";
 import { UserListHead, UserListToolbar } from "../sections/@dashboard/user";
 
 import { useUsersQuery } from "../store/api";
+import { Link } from "react-router-dom";
 
 // ----------------------------------------------------------------------
 
@@ -174,12 +175,14 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Todos
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Iconify icon="eva:plus-fill" />}
-          >
-            New Todo
-          </Button>
+          <Link to={"/dashboard/addproduct"}>
+            <Button
+              variant="contained"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+            >
+              New Todo
+            </Button>
+          </Link>
         </Stack>
 
         <Card>

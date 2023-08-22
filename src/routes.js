@@ -11,6 +11,7 @@ import ProductsPage from "./pages/ProductsPage";
 import DashboardAppPage from "./pages/DashboardAppPage";
 import TodosPage from "./pages/TodosPage";
 import PrivateRoute from "./layouts/PrivateRoute";
+import AddProduct from "./pages/AddProduct";
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +34,6 @@ export default function Router() {
           path: "user",
           element: (
             <PrivateRoute>
-              {" "}
               <UserPage />
             </PrivateRoute>
           ),
@@ -42,8 +42,7 @@ export default function Router() {
           path: "products",
           element: (
             <PrivateRoute>
-              {" "}
-              <ProductsPage />{" "}
+              <ProductsPage />
             </PrivateRoute>
           ),
         },
@@ -52,7 +51,15 @@ export default function Router() {
           path: "todos",
           element: (
             <PrivateRoute>
-              <TodosPage />{" "}
+              <TodosPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: "addproduct",
+          element: (
+            <PrivateRoute>
+              <AddProduct />
             </PrivateRoute>
           ),
         },
