@@ -74,10 +74,6 @@ export default function AddProductForm() {
 
   const [category, setCategory] = useState("");
 
-  const getProducts = async () => {
-    let { data: products } = await supabase.from("products").select("*");
-  };
-
   const getCategories = async () => {
     let { data: categories } = await supabase.from("categories").select("*");
     setCategoryData(categories);
