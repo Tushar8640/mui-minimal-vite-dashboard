@@ -1,10 +1,11 @@
 import { Button, Container, Stack, Typography } from "@mui/material";
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
-import Iconify from "../components/iconify";
+import { Link, useNavigate } from "react-router-dom";
 import AddProductForm from "../components/From/AddProductForm";
+import { ArrowBack } from "@mui/icons-material";
 
 export default function AddProduct() {
+  const navigate = useNavigate();
   return (
     <>
       <Helmet>
@@ -23,10 +24,11 @@ export default function AddProduct() {
           </Typography>
           <Link to={"/dashboard/addproduct"}>
             <Button
+              onClick={() => navigate(-1)}
               variant="contained"
-              startIcon={<Iconify icon="eva:plus-fill" />}
+              startIcon={<ArrowBack />}
             >
-              New Todo
+              Back
             </Button>
           </Link>
         </Stack>

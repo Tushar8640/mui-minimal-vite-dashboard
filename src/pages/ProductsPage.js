@@ -26,7 +26,6 @@ import Iconify from "../components/iconify";
 
 import { UserListHead, UserListToolbar } from "../sections/@dashboard/user";
 
-import { useUsersQuery } from "../store/api";
 import { Link } from "react-router-dom";
 import supabase from "../supabase";
 
@@ -35,11 +34,9 @@ import supabase from "../supabase";
 const TABLE_HEAD = [
   { id: "id", label: "Id", alignRight: false },
   { id: "name", label: "Name", alignRight: false },
-  { id: "username", label: "UserName", alignRight: false },
-  { id: "company", label: "Company", alignRight: false },
-  { id: "email", label: "Email", alignRight: false },
-  { id: "phone", label: "Phone", alignRight: false },
-  { id: "website", label: "website", alignRight: false },
+  { id: "quantity", label: "Quantity", alignRight: false },
+  { id: "price", label: "Price", alignRight: false },
+  { id: "category", label: "Category", alignRight: false },
   { id: "" },
 ];
 
@@ -78,8 +75,6 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
-  const { data: USERLIST } = useUsersQuery();
-
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -93,6 +88,7 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState("");
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
   const [products, setProducts] = useState([]);
 
   const handleOpenMenu = (event) => {
@@ -111,7 +107,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = products?.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -151,10 +147,10 @@ export default function UserPage() {
   };
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - products.length) : 0;
 
   const filteredUsers = applySortFilter(
-    USERLIST,
+    products,
     getComparator(order, orderBy),
     filterName
   );
@@ -214,7 +210,7 @@ export default function UserPage() {
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={USERLIST?.length}
+                rowCount={products?.length}
                 numSelected={selected?.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
@@ -223,21 +219,13 @@ export default function UserPage() {
                 {filteredUsers
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   ?.map((row) => {
-                    const {
-                      id,
-                      name,
-                      username,
-                      company,
-                      email,
-                      phone,
-                      website,
-                    } = row;
+                    const { product_id, name, quantity, price, category } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
                       <TableRow
                         hover
-                        key={id}
+                        key={product_id}
                         tabIndex={-1}
                         role="checkbox"
                         selected={selectedUser}
@@ -248,7 +236,7 @@ export default function UserPage() {
                             onChange={(event) => handleClick(event, name)}
                           />
                         </TableCell>
-                        <TableCell align="left">{id}</TableCell>
+                        <TableCell align="left">{product_id}</TableCell>
                         <TableCell component="th" scope="row" padding="none">
                           <Stack
                             direction="row"
@@ -262,13 +250,12 @@ export default function UserPage() {
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{username}</TableCell>
-                        <TableCell align="left">{company?.name}</TableCell>
+                        <TableCell align="left">{quantity}</TableCell>
+                        <TableCell align="left">{price}</TableCell>
 
-                        <TableCell align="left">{email}</TableCell>
-
-                        <TableCell align="left">{phone}</TableCell>
-                        <TableCell align="left">{website}</TableCell>
+                        <TableCell align="left">
+                          {category?.category_name}
+                        </TableCell>
 
                         <TableCell align="right">
                           <IconButton
@@ -316,11 +303,11 @@ export default function UserPage() {
           </TableContainer>
 
           {/* checking userlist is undefine or not. */}
-          {USERLIST && (
+          {products && (
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={USERLIST?.length}
+              count={products?.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

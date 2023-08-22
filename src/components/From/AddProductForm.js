@@ -135,10 +135,9 @@ export default function AddProductForm() {
 
     console.log(data, "Product and color associations added successfully.");
   };
-  console.log(category);
+
   return (
     <>
-      {" "}
       <Box
         spacing={2}
         width={"100%"}
@@ -165,17 +164,18 @@ export default function AddProductForm() {
             />
             <FormControl fullWidth sx={{ m: 1 }}>
               <InputLabel htmlFor="outlined-adornment-amount">
-                Amount
+                Price
               </InputLabel>
               <OutlinedInput
                 name="price"
                 type="number"
+                label="Price"
                 onChange={(e) => handleOnChange(e)}
                 id="outlined-adornment-amount"
                 startAdornment={
                   <InputAdornment position="start">$</InputAdornment>
                 }
-                label="Price"
+               
               />
             </FormControl>
             <FormControl fullWidth sx={{ m: 1 }}>
@@ -186,7 +186,7 @@ export default function AddProductForm() {
                 multiple
                 value={selecetdColors}
                 onChange={handleChange}
-                input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                input={<OutlinedInput id="select-multiple-chip" label="Color" />}
                 renderValue={(selected) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((value) => (
@@ -209,7 +209,7 @@ export default function AddProductForm() {
             </FormControl>
           </Stack>
           <Stack width={500} spacing={2}>
-            <TextField fullWidth id="fullWidth" type="file" />
+            {/* <TextField fullWidth id="fullWidth" type="file" /> */}
             <TextField
               onChange={(e) => handleOnChange(e)}
               fullWidth
@@ -227,7 +227,7 @@ export default function AddProductForm() {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={category}
-                label="Age"
+                label="Category"
                 onChange={(e) => {
                   setCategory(e.target.value);
                 }}
@@ -258,6 +258,7 @@ export default function AddProductForm() {
               component="label"
               fullWidth
               startIcon={<UploadFileOutlined />}
+              sx={{height:195}}
             >
               Upload Image
               <input
