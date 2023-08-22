@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 import { UploadFileOutlined } from "@mui/icons-material";
 import { enqueueSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
+import { LoadingButton } from "@mui/lab";
 
 function getStyles(name, personName, theme) {
   return {
@@ -41,11 +42,12 @@ const MenuProps = {
 
 export default function AddProductForm() {
   const [selecetdColors, setSelecetdColors] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [categoryData, setCategoryData] = useState([]);
   const [colors, setColors] = useState([]);
   const [productData, setProductData] = useState({});
   const theme = useTheme();
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const handleOnChange = (event) => {
     const { value, name } = event.target;
     const newData = { ...productData, [name]: value };
@@ -103,6 +105,7 @@ const navigate = useNavigate();
       productData?.price !== undefined &&
       category
     ) {
+      setIsLoading(true);
       const { data, error } = await supabase
         .from("products")
         .insert([
@@ -141,12 +144,12 @@ const navigate = useNavigate();
           console.error(colorError.message);
           return;
         }
-      
       }
       enqueueSnackbar("Product added successfully!", { variant: "success" });
       console.log(data, "Product and color associations added successfully.");
-      setProductData({})
-      navigate("/dashboard/products")
+      setProductData({});
+      setIsLoading(false);
+      navigate("/dashboard/products");
     } else {
       enqueueSnackbar("Please fill all of the fields!", { variant: "error" });
     }
@@ -291,17 +294,17 @@ const navigate = useNavigate();
             </Button>
           </Stack>
         </Stack>
-        <Button
-          onClick={() => addProducts()}
-          variant="contained"
-          type="submit"
+     
+        <LoadingButton
           size="large"
-          color="secondary"
-          component="label"
+          onClick={() => addProducts()}
+          loading={isLoading}
+          variant="contained"
           sx={{ mt: 2 }}
+          color="secondary"
         >
-          Create Product
-        </Button>
+          <span> Create Product</span>
+        </LoadingButton>
       </Box>
     </>
   );
