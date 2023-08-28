@@ -27,6 +27,11 @@ const navConfig = [
     icon: <Icon icon="ri:todo-fill" />,
   },
   {
+    title: "files",
+    path: "/dashboard/files",
+    icon: <Icon icon="ri:file-fill" />,
+  },
+  {
     title: "product",
     path: "/dashboard/products",
     icon: icon("ic_cart"),

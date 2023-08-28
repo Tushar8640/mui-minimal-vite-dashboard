@@ -13,6 +13,7 @@ import TodosPage from "./pages/TodosPage";
 import PrivateRoute from "./layouts/PrivateRoute";
 import AddProduct from "./pages/AddProduct";
 import ProductDetailsPage from "./pages/ProductDetailspage";
+import FilesPage from "./pages/FilesPage";
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +37,14 @@ export default function Router() {
           element: (
             <PrivateRoute>
               <UserPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: "files",
+          element: (
+            <PrivateRoute>
+              <FilesPage />
             </PrivateRoute>
           ),
         },
