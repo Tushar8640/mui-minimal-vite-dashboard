@@ -12,6 +12,7 @@ import DashboardAppPage from "./pages/DashboardAppPage";
 import TodosPage from "./pages/TodosPage";
 import PrivateRoute from "./layouts/PrivateRoute";
 import AddProduct from "./pages/AddProduct";
+import ProductDetailsPage from "./pages/ProductDetailspage";
 
 // ----------------------------------------------------------------------
 
@@ -43,6 +44,14 @@ export default function Router() {
           element: (
             <PrivateRoute>
               <ProductsPage />
+            </PrivateRoute>
+          ),
+        },
+        {
+          path: "product/:id",
+          element: (
+            <PrivateRoute>
+              <ProductDetailsPage />
             </PrivateRoute>
           ),
         },

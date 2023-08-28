@@ -26,10 +26,11 @@ import Iconify from "../components/iconify";
 
 import { UserListHead } from "../sections/@dashboard/user";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import supabase from "../supabase";
 import ProductListToolbar from "../sections/@dashboard/products/ProductListToolbar";
 import Scrollbar from "../components/scrollbar/Scrollbar";
+import { enqueueSnackbar } from 'notistack'
 
 // ----------------------------------------------------------------------
 
@@ -93,14 +94,39 @@ export default function UserPage() {
 
   const [products, setProducts] = useState([]);
 
-  const handleOpenMenu = (event) => {
+  const [actionProductId, setActionProductId] = useState("");
+
+  const [isChanged, setIsChanged] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleOpenMenu = (event, id) => {
     setOpen(event.currentTarget);
+    setActionProductId(id);
   };
 
   const handleCloseMenu = () => {
     setOpen(null);
   };
 
+  const handleDelete = async () => {
+    handleCloseMenu()
+    const { error: deleteError } = await supabase
+      .from("product_colors")
+      .delete()
+      .eq("product_id", actionProductId);
+    console.log(deleteError);
+    if (deleteError) return;
+    const { error } = await supabase
+      .from("products")
+      .delete()
+      .eq("product_id", actionProductId);
+    console.log(error);
+    if (!error) {
+      enqueueSnackbar('Product deleted successfully')
+      setIsChanged(!isChanged);
+    }
+  };
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -171,8 +197,8 @@ export default function UserPage() {
 
   useEffect(() => {
     getProducts();
-  }, []);
-  console.log(products);
+  }, [isChanged]);
+  
   return (
     <>
       <Helmet>
@@ -268,7 +294,7 @@ export default function UserPage() {
                             <IconButton
                               size="large"
                               color="inherit"
-                              onClick={handleOpenMenu}
+                              onClick={(e) => handleOpenMenu(e, product_id)}
                             >
                               <Iconify icon={"eva:more-vertical-fill"} />
                             </IconButton>
@@ -343,12 +369,12 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
+        <MenuItem onClick={() => navigate(`/dashboard/product/${1}`)}>
           <Iconify icon={"eva:edit-fill"} sx={{ mr: 2 }} />
           Edit
         </MenuItem>
 
-        <MenuItem sx={{ color: "error.main" }}>
+        <MenuItem onClick={handleDelete} sx={{ color: "error.main" }}>
           <Iconify icon={"eva:trash-2-outline"} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
