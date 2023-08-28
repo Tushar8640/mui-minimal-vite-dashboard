@@ -9,7 +9,7 @@ export default function AddProduct() {
   return (
     <>
       <Helmet>
-        <title> Add Todo | Minimal UI </title>
+        <title> Add Product | Minimal UI </title>
       </Helmet>
 
       <Container>

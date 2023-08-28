@@ -11,6 +11,7 @@ import {
   OutlinedInput,
   InputAdornment,
   Chip,
+  Grid,
 } from "@mui/material";
 // components
 import { useTheme } from "@mui/material/styles";
@@ -54,8 +55,6 @@ export default function AddProductForm() {
     setProductData(newData);
   };
 
-  console.log(productData);
-
   const handleChange = (event) => {
     const {
       target: { value },
@@ -65,19 +64,55 @@ export default function AddProductForm() {
       typeof value === "string" ? value.split(",") : value
     );
   };
+  const [selectedImages, setSelectedImages] = useState([]);
+  const handleSelectedFile = (event) => {
+    const files = Array.from(event.target.files);
 
-  // const handleSelectedFile = (event) => {
-  //   const files = Array.from(event.target.files);
-  //   console.log(files);
-  //   const statusStep = 100 / files.length;
+    // Filter out only image files
+    const imageFiles = files.filter((file) => file.type.startsWith("image/"));
 
-  //   for (let i = 0; i < files.length; i++) {
-  //     setState(state + statusStep);
-  //   }
-  // };
+    setSelectedImages(imageFiles);
+  };
+  const handleRemoveImage = (index) => {
+    setSelectedImages((prevSelectedImages) =>
+      prevSelectedImages.filter((_, i) => i !== index)
+    );
+  };
 
+  const handleImageUpload = async () => {
+    for (const file of selectedImages) {
+      const fileSizeInMB = file.size / (1024 * 1024);
+      console.log(fileSizeInMB);
+      const { data, error } = await supabase.storage
+        .from("Image")
+        .upload(`${file.name}`, file);
+
+      if (error) {
+        console.error("Error uploading file:", error);
+      } else {
+        console.log("File uploaded successfully:", data);
+      }
+    }
+  };
+  const [isDragging, setIsDragging] = useState(false);
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const selectedFile = Array.from(event.dataTransfer.files);
+    console.log(selectedFile);
+    setSelectedImages(selectedFile);
+    setIsDragging(false);
+  };
+
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    setIsDragging(false);
+  };
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
   const [category, setCategory] = useState("");
-
+  console.log(isDragging);
   const getCategories = async () => {
     let { data: categories } = await supabase.from("categories").select("*");
     setCategoryData(categories);
@@ -282,19 +317,65 @@ export default function AddProductForm() {
               component="label"
               fullWidth
               startIcon={<UploadFileOutlined />}
-              sx={{ height: 195 }}
+              sx={{
+                height: 195,
+                backgroundColor: isDragging ? "rgba(0, 0, 0, 0.2)" : "initial",
+                transition: "background-color 0.2s ease-in-out",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
+                },
+              }}
+              className={`dropzone-button ${isDragging ? "dragging" : ""}`}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
             >
-              Upload Image
+              Upload Image / Drop Image
               <input
                 type="file"
                 hidden
                 multiple
-                // onChange={handleSelectedFile}
+                onChange={handleSelectedFile}
+                accept="image/*"
               />
             </Button>
+            <Grid
+              container
+              spacing={{ xs: 2, md: 3 }}
+              columns={{ xs: 4, sm: 8, md: 12 }}
+            >
+              {selectedImages.map((image, index) => (
+                <Grid item xs={2} sm={4} md={3} key={index}>
+                  <Box
+                    sx={{
+                      maxWidth: "200px",
+                      maxHeight: "200px",
+                      margin: "5px",
+                    }}
+                    key={index}
+                  >
+                    <img
+                      style={{ width: "100%", height: "100px" }}
+                      src={URL.createObjectURL(image)}
+                      alt={`Selected Image ${index}`}
+                      onClick={() => handleRemoveImage(index)}
+                    />
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+            <LoadingButton
+              size="large"
+              onClick={() => handleImageUpload()}
+              variant="contained"
+              sx={{ mt: 2 }}
+              color="secondary"
+            >
+              <span> Upload Image</span>
+            </LoadingButton>
           </Stack>
         </Stack>
-     
+
         <LoadingButton
           size="large"
           onClick={() => addProducts()}
