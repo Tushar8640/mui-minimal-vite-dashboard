@@ -175,6 +175,21 @@ export default function AddProductForm() {
           .select();
         console.log(data);
 
+        const templateUrl =
+          "https://gmbtnewweoaowruiondh.supabase.co/storage/v1/object/public/Image/";
+
+        const resultArray =
+          selectedImages.length !== 0 &&
+          selectedImages?.map((file) => ({
+            product_id: productID,
+            image_url: `${templateUrl}${file.name}`,
+          }));
+
+        const { data: imagedata, error } = await supabase
+          .from("product_images")
+          .insert(resultArray)
+          .select();
+
         if (colorError) {
           console.error(colorError.message);
           return;
@@ -190,6 +205,7 @@ export default function AddProductForm() {
     }
   };
 
+  console.log(selectedImages);
   return (
     <>
       <Box

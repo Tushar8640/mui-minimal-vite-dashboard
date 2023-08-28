@@ -35,7 +35,8 @@ export default function UserPage() {
 
     setProduct(product[0]);
   };
-
+  // https://gmbtnewweoaowruiondh.supabase.co/storage/v1/object/public/product-5.jpg
+  // https://gmbtnewweoaowruiondh.supabase.co/storage/v1/object/public/Image/slide-4.jpg
   useEffect(() => {
     getProduct();
   }, [params]);
