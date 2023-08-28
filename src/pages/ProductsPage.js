@@ -30,7 +30,7 @@ import { Link, useNavigate } from "react-router-dom";
 import supabase from "../supabase";
 import ProductListToolbar from "../sections/@dashboard/products/ProductListToolbar";
 import Scrollbar from "../components/scrollbar/Scrollbar";
-import { enqueueSnackbar } from 'notistack'
+import { enqueueSnackbar } from "notistack";
 
 // ----------------------------------------------------------------------
 
@@ -110,7 +110,7 @@ export default function UserPage() {
   };
 
   const handleDelete = async () => {
-    handleCloseMenu()
+    handleCloseMenu();
     const { error: deleteError } = await supabase
       .from("product_colors")
       .delete()
@@ -123,11 +123,11 @@ export default function UserPage() {
       .eq("product_id", actionProductId);
     console.log(error);
     if (!error) {
-      enqueueSnackbar('Product deleted successfully')
+      enqueueSnackbar("Product deleted successfully");
       setIsChanged(!isChanged);
     }
   };
-  
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -190,7 +190,8 @@ export default function UserPage() {
     let { data: products } = await supabase.from("products").select(`
     product_id, name, description, price, category, quantity,
     category(category_name),
-    product_colors(color_id(color_name))
+    product_colors(color_id(color_name)),
+    product_images(image_url)
   `);
 
     setProducts(products);
@@ -199,7 +200,7 @@ export default function UserPage() {
   useEffect(() => {
     getProducts();
   }, [isChanged]);
-  
+  console.log(products);
   return (
     <>
       <Helmet>
@@ -271,7 +272,15 @@ export default function UserPage() {
                             />
                           </TableCell>
                           <TableCell align="left">{product_id}</TableCell>
-                          <TableCell component="th" scope="row" padding="none">
+                          <TableCell
+                            onClick={() =>
+                              navigate(`/dashboard/product/${product_id}`)
+                            }
+                            component="th"
+                            scope="row"
+                            padding="none"
+                            style={{ cursor: "pointer" }}
+                          >
                             <Stack
                               direction="row"
                               alignItems="center"
@@ -370,7 +379,7 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem onClick={() => navigate(`/dashboard/product/${1}`)}>
+        <MenuItem>
           <Iconify icon={"eva:edit-fill"} sx={{ mr: 2 }} />
           Edit
         </MenuItem>
